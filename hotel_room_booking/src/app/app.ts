@@ -2,13 +2,14 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, computed, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
-import { RoomDto, RoomsApiService } from './rooms-api.service';
+import { RoomDto } from './dto/room.dto';
+import { RoomsService } from './services/rooms.service';
 
 @Component({
   selector: 'app-root',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App implements AfterViewInit {
   protected readonly title = signal('Hotel Room Booking');
@@ -17,7 +18,10 @@ export class App implements AfterViewInit {
     city: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     checkIn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     checkOut: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    guests: new FormControl(2, { nonNullable: true, validators: [Validators.min(1), Validators.max(10)] }),
+    guests: new FormControl(2, {
+      nonNullable: true,
+      validators: [Validators.min(1), Validators.max(10)],
+    }),
   });
 
   readonly canSearch = computed(() => this.searchForm.valid);
@@ -26,7 +30,7 @@ export class App implements AfterViewInit {
   readonly isLoadingRooms = signal(false);
   readonly roomsError = signal<string | null>(null);
 
-  constructor(private readonly roomsApi: RoomsApiService) {}
+  constructor(private readonly roomsApi: RoomsService) {}
 
   ngAfterViewInit(): void {
     document.body.classList.add('app-ready');
@@ -47,8 +51,9 @@ export class App implements AfterViewInit {
 
     try {
       // Swagger: GET /rooms/available_rooms
-      const rooms = await firstValueFrom(this.roomsApi.getAvailableRooms(checkInIso, checkOutIso));
-      this.rooms.set(rooms ?? []);
+      const res = await firstValueFrom(this.roomsApi.getAvailableRooms(checkInIso, checkOutIso));
+      const rooms = unwrapRooms(res);
+      this.rooms.set(rooms);
       window.location.hash = '#featured';
     } catch (e) {
       this.rooms.set([]);
@@ -66,8 +71,24 @@ function toIsoDateTime(dateOnly: string): string {
 }
 
 function normalizeError(err: unknown): string {
-  if (err && typeof err === 'object' && 'message' in err && typeof (err as any).message === 'string') {
+  if (
+    err &&
+    typeof err === 'object' &&
+    'message' in err &&
+    typeof (err as any).message === 'string'
+  ) {
     return (err as any).message;
   }
   return 'Failed to load rooms. Check API_BASE_URL and backend CORS/HTTPS settings.';
+}
+
+function unwrapRooms(res: unknown): RoomDto[] {
+  if (Array.isArray(res)) return res as RoomDto[];
+  if (res && typeof res === 'object') {
+    const anyRes = res as any;
+    if (Array.isArray(anyRes.data)) return anyRes.data as RoomDto[];
+    if (Array.isArray(anyRes.rooms)) return anyRes.rooms as RoomDto[];
+    if (Array.isArray(anyRes.result)) return anyRes.result as RoomDto[];
+  }
+  return [];
 }

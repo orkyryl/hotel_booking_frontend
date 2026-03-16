@@ -30,6 +30,10 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
+/.env
+/public/appsettings.env
+/hotel_room_booking/public/appsettings.env
+./hotel_room_booking/public/appsettings.env
 /.angular/cache
 .sass-cache/
 /connect.lock

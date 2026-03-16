@@ -54,20 +54,6 @@
           </div>
 
           <form class="form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-            <label class="field">
-              <span class="field__label">City</span>
-              <input
-                class="input"
-                type="text"
-                formControlName="city"
-                placeholder="e.g., Lviv"
-                autocomplete="address-level2"
-              />
-              @if (searchForm.controls.city.touched && searchForm.controls.city.invalid) {
-                <span class="field__error">City is required.</span>
-              }
-            </label>
-
             <div class="row">
               <label class="field">
                 <span class="field__label">Check-in</span>
@@ -109,7 +95,9 @@
     <section class="section" id="featured">
       <div class="section__inner">
         <h2 class="section__title">Available rooms</h2>
-        <p class="section__subtitle">Results from Swagger endpoint <code>GET /rooms/available_rooms</code>.</p>
+        <p class="section__subtitle">
+          Results from Swagger endpoint <code>GET /rooms/available_rooms</code>.
+        </p>
 
         @if (isLoadingRooms()) {
           <div class="state state--loading">Loading rooms…</div>
@@ -118,7 +106,8 @@
             <div class="state__title">Could not load rooms</div>
             <div class="state__text">{{ roomsError() }}</div>
             <div class="state__hint">
-              API base URL is loaded from <code>public/appsettings.env</code> (key: <code>API_BASE_URL</code>).
+              API base URL is loaded from <code>public/appsettings.env</code> (key:
+              <code>API_BASE_URL</code>).
             </div>
           </div>
         } @else if (rooms().length === 0) {

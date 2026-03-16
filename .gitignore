@@ -14,6 +14,9 @@
 
 # Environment files
 /.env
+/public/appsettings.env
+/hotel_room_booking/public/appsettings.env
+./hotel_room_booking/public/appsettings.env
 
 # Angular CLI and build artefacts
 /.angular-cli.json

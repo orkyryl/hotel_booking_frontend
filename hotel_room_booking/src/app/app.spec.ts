@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { API_BASE_URL } from './api.tokens';
+import { API_BASE_URL } from './services/api.tokens';
 
 describe('App', () => {
   beforeEach(async () => {
