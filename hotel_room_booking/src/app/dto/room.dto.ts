@@ -1,7 +1,7 @@
 export interface RoomDto {
-  roomId?: number;
+  id?: number;
   roomNumber?: number;
-  roomType?: string;
+  roomTypeName?: string;
   pricePerNight?: number;
   description?: string;
   capacity?: number;
@@ -39,4 +39,3 @@ export interface CreateRoomTypeRequestDto {
 }
 
 export interface UpdateRoomTypeRequestDto extends CreateRoomTypeRequestDto {}
-

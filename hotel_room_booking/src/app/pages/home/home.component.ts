@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { RoomDto } from '../../dto/room.dto';
 import { RoomsService } from '../../services/rooms.service';
@@ -8,7 +9,7 @@ import { RoomsService } from '../../services/rooms.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
@@ -46,7 +47,10 @@ export class HomeComponent {
     try {
       const res = await firstValueFrom(this.roomsApi.getAvailableRooms(checkInIso, checkOutIso));
       const rooms = unwrapRooms(res);
-      this.rooms.set(rooms.filter((room) => room.capacity != null && room.capacity >= value.guests));
+      console.log(rooms);
+      this.rooms.set(
+        rooms.filter((room) => room.capacity != null && room.capacity >= value.guests),
+      );
       window.location.hash = '#featured';
     } catch (e) {
       this.rooms.set([]);
