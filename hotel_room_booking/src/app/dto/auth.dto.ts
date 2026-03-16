@@ -26,12 +26,8 @@ export interface ResetPasswordRequestDto {
   newPassword: string;
 }
 
-// Response shape isn’t shown in the PDF text export, so keep it flexible.
 export interface AuthResponseDto {
-  accessToken?: string;
-  refreshToken?: string;
+  token?: string;
+  refreshtoken?: string;
   userId?: number;
-  expiresInSeconds?: number;
-  tokenType?: string;
 }
-

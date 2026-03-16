@@ -2,6 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 import { API_BASE_URL } from './services/api.tokens';
 
 describe('App', () => {
@@ -11,6 +13,7 @@ describe('App', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideRouter(routes),
         { provide: API_BASE_URL, useValue: 'https://localhost:7167' },
       ],
     }).compileComponents();

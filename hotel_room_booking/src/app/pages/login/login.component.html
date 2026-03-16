@@ -1,0 +1,53 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-card__head">
+      <h1 class="auth-card__title">Sign in</h1>
+      <p class="auth-card__hint">Use your email and password to access your account.</p>
+    </div>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      @if (error()) {
+        <div class="auth-form__error" role="alert">{{ error() }}</div>
+      }
+
+      <label class="field">
+        <span class="field__label">Email</span>
+        <input
+          class="input"
+          type="email"
+          formControlName="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <span class="field__error">
+            @if (form.controls.email.errors?.['required']) { Email is required. }
+            @if (form.controls.email.errors?.['email']) { Enter a valid email. }
+          </span>
+        }
+      </label>
+
+      <label class="field">
+        <span class="field__label">Password</span>
+        <input
+          class="input"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+        />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <span class="field__error">Password is required.</span>
+        }
+      </label>
+
+      <button class="btn btn--primary btn--block" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Signing in…' : 'Sign in' }}
+      </button>
+
+      <p class="auth-form__footer">
+        Don’t have an account? <a routerLink="/register" class="auth-form__link">Create account</a>
+      </p>
+    </form>
+  </div>
+</div>

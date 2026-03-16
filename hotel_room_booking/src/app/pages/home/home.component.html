@@ -1,0 +1,130 @@
+<main class="main">
+  <section class="hero" id="search">
+    <div class="hero__inner">
+      <div class="hero__copy">
+        <div class="hero__badge">API-driven booking</div>
+        <h1 class="hero__title">Book the right room, at the right time.</h1>
+        <p class="hero__subtitle">
+          Search availability, compare rooms, and manage reservations—all in one place.
+        </p>
+        <div class="hero__stats" aria-label="Highlights">
+          <div class="stat">
+            <div class="stat__value">Fast</div>
+            <div class="stat__label">Search &amp; booking flow</div>
+          </div>
+          <div class="stat">
+            <div class="stat__value">Secure</div>
+            <div class="stat__label">Auth-ready frontend</div>
+          </div>
+          <div class="stat">
+            <div class="stat__value">Clear</div>
+            <div class="stat__label">Reservation management</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">
+          <div class="card__title">Search rooms</div>
+          <div class="card__hint">Fill in details to check availability</div>
+        </div>
+
+        <form class="form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+          <div class="row">
+            <label class="field">
+              <span class="field__label">Check-in</span>
+              <input class="input" type="date" formControlName="checkIn" />
+              @if (searchForm.controls.checkIn.touched && searchForm.controls.checkIn.invalid) {
+                <span class="field__error">Select a date.</span>
+              }
+            </label>
+
+            <label class="field">
+              <span class="field__label">Check-out</span>
+              <input class="input" type="date" formControlName="checkOut" />
+              @if (searchForm.controls.checkOut.touched && searchForm.controls.checkOut.invalid) {
+                <span class="field__error">Select a date.</span>
+              }
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field__label">Guests</span>
+            <input class="input" type="number" formControlName="guests" min="1" max="10" />
+            @if (searchForm.controls.guests.touched && searchForm.controls.guests.invalid) {
+              <span class="field__error">Guests must be between 1 and 10.</span>
+            }
+          </label>
+
+          <button class="btn btn--primary btn--block" type="submit" [disabled]="canSearch()">
+            Search availability
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="featured">
+    <div class="section__inner">
+      <h2 class="section__title">Available rooms</h2>
+      <p class="section__subtitle">Results from <code>GET /rooms/available_rooms</code>.</p>
+
+      @if (isLoadingRooms()) {
+        <div class="state state--loading">Loading rooms…</div>
+      } @else if (roomsError()) {
+        <div class="state state--error">
+          <div class="state__title">Could not load rooms</div>
+          <div class="state__text">{{ roomsError() }}</div>
+          <div class="state__hint">
+            API base URL is in <code>public/appsettings.env</code> (<code>API_BASE_URL</code>).
+          </div>
+        </div>
+      } @else if (rooms().length === 0) {
+        <div class="state state--empty">
+          <div class="state__title">No available rooms found</div>
+          <div class="state__text">Try different dates or guest count.</div>
+        </div>
+      } @else {
+        <div class="grid">
+          @for (room of rooms(); track room.roomId ?? room.roomNumber ?? $index) {
+            <article class="room">
+              <div class="room__top">
+                <div class="room__badge">{{ room.roomType || 'Room' }}</div>
+                <div class="room__price">
+                  @if (room.pricePerNight != null) {
+                    from <strong>{{ room.pricePerNight }}</strong> / night
+                  } @else {
+                    <span class="room__muted">price n/a</span>
+                  }
+                </div>
+              </div>
+              <div class="room__name">
+                @if (room.roomNumber != null) {
+                  Room #{{ room.roomNumber }}
+                } @else if (room.roomId != null) {
+                  Room ID {{ room.roomId }}
+                } @else {
+                  Room
+                }
+              </div>
+              <div class="room__meta">
+                @if (room.capacity != null) {
+                  Capacity: {{ room.capacity }}
+                } @else {
+                  Capacity: n/a
+                }
+              </div>
+              @if (room.description) {
+                <div class="room__desc">{{ room.description }}</div>
+              }
+              <div class="room__actions">
+                <button class="btn btn--ghost" type="button">Details</button>
+                <button class="btn btn--primary" type="button">Book</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</main>
