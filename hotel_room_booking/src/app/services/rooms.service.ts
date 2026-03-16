@@ -41,9 +41,16 @@ export class RoomsService {
   }
 
   // GET /rooms/available_rooms?checkInDate=...&checkOutDate=...
-  getAvailableRooms(checkInDateIso: string, checkOutDateIso: string): Observable<RoomDto[] | unknown> {
-    const params = new HttpParams().set('checkInDate', checkInDateIso).set('checkOutDate', checkOutDateIso);
-    return this.api.http.get<RoomDto[] | unknown>(this.api.url('/rooms/available_rooms'), { params });
+  getAvailableRooms(
+    checkInDateIso: string,
+    checkOutDateIso: string,
+  ): Observable<RoomDto[] | unknown> {
+    const params = new HttpParams()
+      .set('checkInDate', checkInDateIso)
+      .set('checkOutDate', checkOutDateIso);
+    return this.api.http.get<RoomDto[] | unknown>(this.api.url('/rooms/available_rooms'), {
+      params,
+    });
   }
 
   // POST /rooms/create_room
@@ -103,4 +110,3 @@ export class RoomsService {
     return this.api.http.delete(this.api.url('/rooms/delete_room_type'), { params });
   }
 }
-

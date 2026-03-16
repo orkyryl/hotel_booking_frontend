@@ -80,13 +80,9 @@
               }
             </label>
 
-            <button class="btn btn--primary btn--block" type="submit" [disabled]="!canSearch()">
+            <button class="btn btn--primary btn--block" type="submit" [disabled]="canSearch()">
               Search availability
             </button>
-
-            <div class="form__note">
-              Next step: connect this form to the Swagger “search/availability” endpoint.
-            </div>
           </form>
         </div>
       </div>
@@ -156,30 +152,6 @@
             }
           </div>
         }
-      </div>
-    </section>
-
-    <section class="section section--muted" id="about">
-      <div class="section__inner">
-        <h2 class="section__title">About this app</h2>
-        <div class="split">
-          <div class="panel">
-            <div class="panel__title">What you can build next</div>
-            <ul class="list">
-              <li>Room search + filters (price, capacity, amenities)</li>
-              <li>Reservation create/cancel/extend</li>
-              <li>Authentication + user profile</li>
-              <li>Admin: manage rooms, pricing, availability</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <div class="panel__title">Frontend stack</div>
-            <div class="panel__text">
-              Angular standalone components, reactive forms, and a clean UI shell that we’ll connect
-              to your Swagger API.
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   </main>

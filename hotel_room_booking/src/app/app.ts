@@ -15,7 +15,6 @@ export class App implements AfterViewInit {
   protected readonly title = signal('Hotel Room Booking');
 
   readonly searchForm = new FormGroup({
-    city: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     checkIn: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     checkOut: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     guests: new FormControl(2, {
@@ -43,6 +42,7 @@ export class App implements AfterViewInit {
     }
 
     const value = this.searchForm.getRawValue();
+    console.log(value);
     const checkInIso = toIsoDateTime(value.checkIn);
     const checkOutIso = toIsoDateTime(value.checkOut);
 
@@ -53,7 +53,7 @@ export class App implements AfterViewInit {
       // Swagger: GET /rooms/available_rooms
       const res = await firstValueFrom(this.roomsApi.getAvailableRooms(checkInIso, checkOutIso));
       const rooms = unwrapRooms(res);
-      this.rooms.set(rooms);
+      this.rooms.set(rooms.filter((room) => room.capacity && room.capacity == value.guests));
       window.location.hash = '#featured';
     } catch (e) {
       this.rooms.set([]);
