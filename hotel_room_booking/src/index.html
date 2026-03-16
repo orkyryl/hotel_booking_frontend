@@ -1,13 +1,58 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>HotelRoomBooking</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>Hotel Room Booking</title>
+    <base href="/" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Hotel room booking web application frontend built with Angular."
+    />
+    <meta name="theme-color" content="#0f766e" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Global app styles -->
+    <link rel="stylesheet" href="./hotel_room_booking/src/styles.css" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <noscript
+      >JavaScript is required to run this application. Please enable JavaScript in your
+      browser.</noscript
+    >
+    <div class="app-shell">
+      <div class="app-shell__loading">
+        <div class="splash">
+          <div class="splash__badge">
+            <span class="splash__dot"></span>
+            <span>Hotel Booking Frontend</span>
+          </div>
+          <h1 class="splash__title">Loading your stays and reservations…</h1>
+          <p class="splash__subtitle">
+            Connecting to the hotel booking API and preparing the dashboard.
+          </p>
+          <div class="splash__meta">
+            <span>
+              <span class="splash__spinner"></span>
+              Initializing Angular app
+            </span>
+            <div class="splash__progress" aria-hidden="true">
+              <div class="splash__progress-bar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <app-root></app-root>
+    </div>
+  </body>
 </html>
