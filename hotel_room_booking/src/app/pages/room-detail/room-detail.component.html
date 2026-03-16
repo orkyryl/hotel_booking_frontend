@@ -1,0 +1,79 @@
+<div class="room-detail">
+  @if (loading()) {
+    <div class="room-detail__loading">Loading room…</div>
+  } @else if (error()) {
+    <div class="room-detail__error">
+      <h1 class="room-detail__error-title">Room not found</h1>
+      <p class="room-detail__error-text">{{ error() }}</p>
+      <a routerLink="/" class="btn btn--primary">Back to search</a>
+    </div>
+  } @else if (room(); as r) {
+    <div class="room-detail__inner">
+      <a routerLink="/" fragment="featured" class="room-detail__back">← Back to rooms</a>
+
+      @if (photos().length > 0) {
+        <div class="room-detail__gallery">
+          @for (photo of photos(); track photo.roomPhotoId ?? photo.photoUrl ?? $index) {
+            @if (photo.photoUrl) {
+              <img
+                [src]="photo.photoUrl"
+                alt="Room photo"
+                class="room-detail__img"
+                loading="lazy"
+              />
+            }
+          }
+        </div>
+      } @else {
+        <div class="room-detail__placeholder">
+          <span class="room-detail__placeholder-text">No photo</span>
+        </div>
+      }
+
+      <div class="room-detail__card">
+        <div class="room-detail__head">
+          <span class="room-detail__badge">{{ r.roomTypeName ?? 'Room' }}</span>
+          <h1 class="room-detail__title">{{ title() }}</h1>
+          @if (r.pricePerNight != null) {
+            <p class="room-detail__price">
+              <strong>{{ r.pricePerNight }}</strong> per night
+            </p>
+          }
+        </div>
+
+        <dl class="room-detail__meta">
+          @if (r.roomNumber != null) {
+            <div class="room-detail__meta-row">
+              <dt>Room number</dt>
+              <dd>{{ r.roomNumber }}</dd>
+            </div>
+          }
+          @if (r.capacity != null) {
+            <div class="room-detail__meta-row">
+              <dt>Capacity</dt>
+              <dd>{{ r.capacity }} guests</dd>
+            </div>
+          }
+          @if (r.roomTypeName) {
+            <div class="room-detail__meta-row">
+              <dt>Type</dt>
+              <dd>{{ r.roomTypeName }}</dd>
+            </div>
+          }
+        </dl>
+
+        @if (r.description) {
+          <div class="room-detail__description">
+            <h2 class="room-detail__subtitle">Description</h2>
+            <p>{{ r.description }}</p>
+          </div>
+        }
+
+        <div class="room-detail__actions">
+          <a routerLink="/" class="btn btn--ghost">Back to search</a>
+          <button class="btn btn--primary" type="button">Book this room</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
