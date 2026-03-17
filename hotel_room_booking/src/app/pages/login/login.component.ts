@@ -18,7 +18,11 @@ export class LoginComponent {
   readonly form = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
+      validators: [
+        Validators.required,
+        Validators.email,
+        Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
+      ],
     }),
     password: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });

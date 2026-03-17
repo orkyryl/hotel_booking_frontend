@@ -22,7 +22,9 @@
         @if (form.controls.email.touched && form.controls.email.invalid) {
           <span class="field__error">
             @if (form.controls.email.errors?.['required']) { Email is required. }
-            @if (form.controls.email.errors?.['email']) { Enter a valid email. }
+            @if (form.controls.email.errors?.['email'] || form.controls.email.errors?.['pattern']) {
+              Enter a valid email.
+            }
           </span>
         }
       </label>
@@ -37,7 +39,10 @@
           autocomplete="tel"
         />
         @if (form.controls.phoneNumber.touched && form.controls.phoneNumber.invalid) {
-          <span class="field__error">Phone number is required.</span>
+          <span class="field__error">
+            @if (form.controls.phoneNumber.errors?.['required']) { Phone number is required. }
+            @if (form.controls.phoneNumber.errors?.['pattern']) { Enter a valid phone number. }
+          </span>
         }
       </label>
 

@@ -16,9 +16,19 @@ export class RegisterComponent {
   readonly form = new FormGroup({
     email: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.email],
+      validators: [
+        Validators.required,
+        Validators.email,
+        Validators.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/),
+      ],
     }),
-    phoneNumber: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    phoneNumber: new FormControl('', {
+      nonNullable: true,
+      validators: [
+        Validators.required,
+        Validators.pattern(/^\+?[0-9\s\-()]{7,20}$/),
+      ],
+    }),
     password: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(6)],

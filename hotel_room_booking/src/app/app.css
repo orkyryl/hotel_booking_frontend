@@ -132,9 +132,13 @@
     display: none;
   }
 }
+@media (max-width: 720px) {
+  .header__inner {
+    flex-wrap: wrap;
+  }
 
-@media (max-width: 520px) {
   .header__actions {
-    display: none;
+    width: 100%;
+    justify-content: flex-end;
   }
 }
