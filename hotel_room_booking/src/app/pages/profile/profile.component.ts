@@ -56,6 +56,7 @@ export class ProfileComponent implements OnInit {
       const res = await firstValueFrom(this.users.getUser(userId));
       const u = this.normalizeUser(res);
       this.user.set(u);
+      if (u?.roles) this.authState.setRoles(u.roles);
       if (u) {
         this.form.patchValue({
           email: u.email,

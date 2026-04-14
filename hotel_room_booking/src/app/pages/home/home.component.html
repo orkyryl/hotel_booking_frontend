@@ -66,8 +66,15 @@
 
   <section class="section" id="featured">
     <div class="section__inner">
-      <h2 class="section__title">Available rooms</h2>
-      <p class="section__subtitle">Results from <code>GET /rooms/available_rooms</code>.</p>
+      <div class="section__head">
+        <div>
+          <h2 class="section__title">Available rooms</h2>
+          <p class="section__subtitle">Results from <code>GET /rooms/available_rooms</code>.</p>
+        </div>
+        @if (authState.isAdmin()) {
+          <a [routerLink]="['/admin/rooms', 'new']" class="btn btn--ghost">Add room</a>
+        }
+      </div>
 
       @if (isLoadingRooms()) {
         <div class="state state--loading">Loading rooms…</div>

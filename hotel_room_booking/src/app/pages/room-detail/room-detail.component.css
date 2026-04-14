@@ -150,6 +150,12 @@
   color: rgba(229, 231, 235, 0.85);
 }
 
+.room-detail__delete-msg {
+  margin-top: 0.75rem;
+  color: #fecaca;
+  font-size: 0.9rem;
+}
+
 .room-detail__actions {
   display: flex;
   flex-wrap: wrap;

@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { RoomDto } from '../../dto/room.dto';
+import { AuthStateService } from '../../services/auth-state.service';
 import { RoomsService } from '../../services/rooms.service';
 
 @Component({
@@ -29,7 +30,10 @@ export class HomeComponent {
   readonly isLoadingRooms = signal(false);
   readonly roomsError = signal<string | null>(null);
 
-  constructor(private readonly roomsApi: RoomsService) {}
+  constructor(
+    private readonly roomsApi: RoomsService,
+    readonly authState: AuthStateService,
+  ) {}
 
   async onSearch(): Promise<void> {
     if (!this.searchForm.valid) {
@@ -47,7 +51,6 @@ export class HomeComponent {
     try {
       const res = await firstValueFrom(this.roomsApi.getAvailableRooms(checkInIso, checkOutIso));
       const rooms = unwrapRooms(res);
-      console.log(rooms);
       this.rooms.set(
         rooms.filter((room) => room.capacity != null && room.capacity >= value.guests),
       );

@@ -1,0 +1,118 @@
+<div class="admin-room">
+  <div class="admin-room__inner">
+    <a routerLink="/" class="admin-room__back">← Back</a>
+
+    <div class="card">
+      <div class="card__head">
+        <div class="card__title">{{ heading() }}</div>
+        <div class="card__hint">Admin only — changes are sent to the rooms API.</div>
+      </div>
+
+      @if (loading()) {
+        <div class="state state--loading">Loading room…</div>
+      } @else if (error() && !form.dirty && !isCreate()) {
+        <div class="state state--error">
+          <div class="state__title">Could not load room</div>
+          <div class="state__text">{{ error() }}</div>
+          <a routerLink="/" class="btn btn--primary">Home</a>
+        </div>
+      } @else {
+        <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="row">
+            <label class="field">
+              <span class="field__label">Room number</span>
+              <input class="input" type="number" formControlName="roomNumber" min="1" step="1" />
+              @if (form.controls.roomNumber.touched && form.controls.roomNumber.invalid) {
+                <span class="field__error">Enter a positive room number.</span>
+              }
+            </label>
+
+            <label class="field">
+              <span class="field__label">Price per night</span>
+              <input
+                class="input"
+                type="number"
+                formControlName="pricePerNight"
+                min="0"
+                step="0.01"
+              />
+              @if (form.controls.pricePerNight.touched && form.controls.pricePerNight.invalid) {
+                <span class="field__error">Enter a valid price.</span>
+              }
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="field__label">Room type</span>
+            @if (loadingTypes()) {
+              <span class="field__hint">Loading types…</span>
+            }
+            <input
+              class="input"
+              type="text"
+              formControlName="roomType"
+              placeholder="e.g. Deluxe"
+              [attr.list]="roomTypes().length ? 'admin-room-type-suggestions' : null"
+            />
+            @if (roomTypes().length > 0) {
+              <datalist id="admin-room-type-suggestions">
+                @for (t of roomTypes(); track t.roomTypeId ?? t.name ?? $index) {
+                  <option [value]="t.name"></option>
+                }
+              </datalist>
+            }
+            @if (!loadingTypes() && roomTypes().length === 0) {
+              <span class="field__hint">No types from API — enter the name to match your backend.</span>
+            }
+            @if (form.controls.roomType.touched && form.controls.roomType.invalid) {
+              <span class="field__error">Room type is required.</span>
+            }
+          </label>
+
+          <label class="field">
+            <span class="field__label">Capacity</span>
+            <input class="input" type="number" formControlName="capacity" min="1" step="1" />
+            @if (form.controls.capacity.touched && form.controls.capacity.invalid) {
+              <span class="field__error">Enter capacity (at least 1).</span>
+            }
+          </label>
+
+          <label class="field">
+            <span class="field__label">Description</span>
+            <textarea class="input input--textarea" rows="4" formControlName="description"></textarea>
+            @if (form.controls.description.touched && form.controls.description.invalid) {
+              <span class="field__error">Description is required.</span>
+            }
+          </label>
+
+          @if (error()) {
+            <div class="form__error">{{ error() }}</div>
+          }
+
+          <div class="admin-room__actions">
+            <a routerLink="/" class="btn btn--ghost">Cancel</a>
+            <button class="btn btn--primary" type="submit" [disabled]="saving() || deleting()">
+              {{ isCreate() ? 'Create room' : 'Save changes' }}
+            </button>
+          </div>
+
+          @if (!isCreate()) {
+            <div class="admin-room__danger">
+              <button
+                class="btn btn--danger"
+                type="button"
+                [disabled]="deleting() || saving()"
+                (click)="onDeleteRoom()"
+              >
+                {{ deleting() ? 'Deleting…' : 'Delete room' }}
+              </button>
+              @if (deleteError()) {
+                <p class="admin-room__danger-msg" role="alert">{{ deleteError() }}</p>
+              }
+            </div>
+          }
+        </form>
+      }
+    </div>
+  </div>
+</div>

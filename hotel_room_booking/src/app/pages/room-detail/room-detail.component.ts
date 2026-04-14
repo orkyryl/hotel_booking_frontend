@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal, computed } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { RoomDto, RoomPhotoDto } from '../../dto/room.dto';
+import { AuthStateService } from '../../services/auth-state.service';
 import { RoomsService } from '../../services/rooms.service';
 
 @Component({
@@ -17,6 +18,8 @@ export class RoomDetailComponent implements OnInit {
   readonly photos = signal<RoomPhotoDto[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly deleting = signal(false);
+  readonly deleteError = signal<string | null>(null);
 
   readonly title = computed(() => {
     const r = this.room();
@@ -28,7 +31,9 @@ export class RoomDetailComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly rooms: RoomsService,
+    readonly authState: AuthStateService,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -46,7 +51,8 @@ export class RoomDetailComponent implements OnInit {
     try {
       const roomRes = await firstValueFrom(this.rooms.getRoom(roomId));
       const r = this.normalizeRoom(roomRes);
-      this.room.set(r);
+      // Route id is authoritative; API may omit or stringify roomId so `r.id` stays undefined.
+      this.room.set(r ? { ...r, id: r.id ?? roomId } : null);
 
       if (r) {
         try {
@@ -65,6 +71,28 @@ export class RoomDetailComponent implements OnInit {
     }
   }
 
+  async onDeleteRoom(): Promise<void> {
+    const r = this.room();
+    const id = r?.id;
+    if (r == null || id == null || !this.authState.isAdmin()) return;
+
+    const label =
+      r.roomNumber != null ? `Room #${r.roomNumber}` : r.roomTypeName?.trim() || 'this room';
+    if (!confirm(`Delete ${label}? This cannot be undone.`)) return;
+
+    this.deleting.set(true);
+    this.deleteError.set(null);
+
+    try {
+      await firstValueFrom(this.rooms.deleteRoom(id));
+      await this.router.navigate(['/']);
+    } catch (e) {
+      this.deleteError.set(this.normalizeError(e, 'Failed to delete room.'));
+    } finally {
+      this.deleting.set(false);
+    }
+  }
+
   private normalizeRoom(res: unknown): RoomDto | null {
     if (
       res &&
@@ -73,7 +101,7 @@ export class RoomDetailComponent implements OnInit {
     ) {
       const o = res as Record<string, unknown>;
       return {
-        id: typeof o['roomId'] === 'number' ? o['roomId'] : undefined,
+        id: parseRoomId(o['roomId'] ?? o['id']),
         roomNumber: typeof o['roomNumber'] === 'number' ? o['roomNumber'] : undefined,
         roomTypeName: typeof o['roomTypeName'] === 'string' ? o['roomTypeName'] : undefined,
         pricePerNight: typeof o['pricePerNight'] === 'number' ? o['pricePerNight'] : undefined,
@@ -104,7 +132,7 @@ export class RoomDetailComponent implements OnInit {
     return [];
   }
 
-  private normalizeError(err: unknown): string {
+  private normalizeError(err: unknown, fallback = 'Failed to load room.'): string {
     if (err && typeof err === 'object') {
       const obj = err as Record<string, unknown>;
       if (typeof obj['message'] === 'string') return obj['message'];
@@ -117,6 +145,15 @@ export class RoomDetailComponent implements OnInit {
       }
       if (typeof obj['error'] === 'string') return obj['error'];
     }
-    return 'Failed to load room.';
+    return fallback;
   }
+}
+
+function parseRoomId(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const n = parseInt(value, 10);
+    return Number.isFinite(n) ? n : undefined;
+  }
+  return undefined;
 }

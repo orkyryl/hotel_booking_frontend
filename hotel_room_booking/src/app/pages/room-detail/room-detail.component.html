@@ -71,8 +71,22 @@
 
         <div class="room-detail__actions">
           <a routerLink="/" class="btn btn--ghost">Back to search</a>
+          @if (authState.isAdmin() && r.id != null) {
+            <a [routerLink]="['/admin/rooms', r.id, 'edit']" class="btn btn--ghost">Edit room</a>
+            <button
+              class="btn btn--danger"
+              type="button"
+              [disabled]="deleting()"
+              (click)="onDeleteRoom()"
+            >
+              {{ deleting() ? 'Deleting…' : 'Delete room' }}
+            </button>
+          }
           <button class="btn btn--primary" type="button">Book this room</button>
         </div>
+        @if (deleteError()) {
+          <p class="room-detail__delete-msg" role="alert">{{ deleteError() }}</p>
+        }
       </div>
     </div>
   }

@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { AuthResponseDto } from '../../dto/auth.dto';
 import { AuthStateService } from '../../services/auth-state.service';
 import { AuthService } from '../../services/auth.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'app-login',
@@ -33,6 +34,7 @@ export class LoginComponent {
   constructor(
     private readonly auth: AuthService,
     private readonly authState: AuthStateService,
+    private readonly users: UsersService,
     private readonly router: Router,
   ) {}
 
@@ -51,7 +53,15 @@ export class LoginComponent {
       const userId = (payload['userId'] as number | undefined) ?? null;
       const token = (payload['token'] as string | undefined) ?? null;
       const refreshtoken = (payload['refreshtoken'] as string | undefined) ?? null;
-      if (userId != null && token) this.authState.setUser(userId, token, refreshtoken);
+      if (userId != null && token) {
+        this.authState.setUser(userId, token, refreshtoken);
+        try {
+          const userRes = await firstValueFrom(this.users.getUser(userId));
+          this.authState.setRoles(extractRoles(userRes));
+        } catch {
+          this.authState.setRoles([]);
+        }
+      }
       await this.router.navigate(['/']);
     } catch (e) {
       this.error.set(this.normalizeError(e));
@@ -74,4 +84,12 @@ export class LoginComponent {
     }
     return 'Login failed. Please check your credentials and try again.';
   }
+}
+
+function extractRoles(res: unknown): string[] {
+  if (res && typeof res === 'object' && 'roles' in res) {
+    const r = (res as Record<string, unknown>)['roles'];
+    return Array.isArray(r) ? (r as string[]) : [];
+  }
+  return [];
 }
